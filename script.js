@@ -125,6 +125,8 @@ rl.on("line", async (input) => {
   }else if (input.startsWith("1user")) {
     writeMessage = null;
     multipleAccounts = false;
+    token = TOKEN_1;
+    author = AUTHOR_1;
     console.log("Set to 1 user");
     return;
   } else if (input.startsWith("2user")) {
@@ -185,7 +187,7 @@ client.on("messageCreate", async (message) => {
   lastNumber = number;
   console.log(`${number} (${message.author.username}) => ${newNumber}`);
   var msgToSend = `${newNumber}`;
-  if(writeMessage && writeMessage != null && author == AUTHOR_1) {
+  if(writeMessage && writeMessage != null && (author == AUTHOR_1 || !multipleAccounts)) {
     msgToSend += ` ${writeMessage}`;
     console.log(`Writing message: ${writeMessage}`)
     writeMessage = null;
