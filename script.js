@@ -63,8 +63,17 @@ async function amorce(){
   const lastMessage = await getLastMessage();
   if(!lastMessage) return console.error("No last message");
   if(lastMessage.author.bot) return console.error("Last message is a bot");
+
+  const match = lastMessage.content.match(regexStartWithNumber);
+  if(!match) return console.error(`Message ${lastMessage.content} does not start with a number`);
+  const number = parseInt(match[1]);
+  if(!number) return console.error(`Number ${match[1]} is not a number`);
+
   if(lastMessage.author.id == author) {
-    if(!multipleAccounts) return console.log("Not multiple accounts");
+    if(!multipleAccounts) {
+      lastNumber = number;
+      return console.log("Not multiple accounts");
+    }
     if(token == TOKEN_1) {
       token = TOKEN_2;
       author = AUTHOR_2;
@@ -73,11 +82,9 @@ async function amorce(){
       author = AUTHOR_1;
     }
   }
-  const match = lastMessage.content.match(regexStartWithNumber);
-  if(!match) return console.error(`Message ${lastMessage.content} does not start with a number`);
-  const number = parseInt(match[1]);
-  if(!number) return console.error(`Number ${match[1]} is not a number`);
+
   const newNumber = number + 1;
+  lastNumber = number;
   console.log(`${number} (${lastMessage.author.username}) => ${newNumber}`);
   var msgToSend = `${newNumber} ${lastMessage.content.substring(match[1].length)}`;
   if(writeMessage) {
@@ -126,7 +133,15 @@ rl.on("line", async (input) => {
     writeMessage = null;
     console.log("Set to 2 users");
     return;
-  } else {
+  } else if (input.startsWith("reset")) {
+    writeMessage = null;
+    lastNumber = null;
+    lastMessage = null;
+    console.log("Reset");
+    return;
+  }
+  
+  else {
     writeMessage = input;
     console.log(`Set message to write: ${input}`);
   }
@@ -157,13 +172,13 @@ client.on("messageCreate", async (message) => {
   const number = parseInt(match[1]);
   if(!number) return console.error(`Number ${match[1]} is not a number`);
 
-  if(lastNumber && number !== (lastNumber)) return console.error(`Number ${number} is not the same as last number ${lastNumber + 1}`);
+  if(lastNumber && number !== (lastNumber+2)) return console.error(`Number ${number} is not the same as last number ${lastNumber + 2}`);
   await sendTypingIndicator();
   await wait((WAIT_TIME || 5) * 1000);
   
   const newNumber = number + 1;
   lastMessage = message;
-  lastNumber = number + 1;
+  lastNumber = number;
   console.log(`${number} (${message.author.username}) => ${newNumber}`);
   var msgToSend = `${newNumber}`;
   if(writeMessage) {
