@@ -20,6 +20,7 @@ var lastMessage = null;
 var lastNumber = null;
 var writeMessage = null;
 var multipleAccounts = MULTIPLE_ACCOUNTS;
+var WaitTime = WAIT_TIME;
 
 async function wait(ms) {
   return new Promise(resolve => {
@@ -87,7 +88,7 @@ async function amorce(){
   lastNumber = number;
   console.log(`${number} (${lastMessage.author.username}) => ${newNumber}`);
   var msgToSend = `${newNumber} ${lastMessage.content.substring(match[1].length)}`;
-  if(writeMessage) {
+  if(writeMessage && writeMessage != null) {
     msgToSend += ` ${writeMessage}`;
     console.log(`Writing message: ${writeMessage}`)
   }
@@ -117,7 +118,6 @@ rl.on("line", async (input) => {
   }else if(input.startsWith("stop")) {
     console.log("Stopping...");
     process.exit();
-    return;
   }else if(input.startsWith("amorce")) {
     writeMessage = null;
     await amorce();
@@ -139,9 +139,13 @@ rl.on("line", async (input) => {
     lastMessage = null;
     console.log("Reset");
     return;
-  }
-  
-  else {
+  } else if (input.startsWith("wait")) {
+    const time = parseInt(input.split(" ")[1]);
+    if(!time) return console.error("No time");
+    console.log(`Set wait time to ${time} seconds`);
+    WaitTime = time;
+    return;
+  }else {
     writeMessage = input;
     console.log(`Set message to write: ${input}`);
   }
@@ -172,16 +176,16 @@ client.on("messageCreate", async (message) => {
   const number = parseInt(match[1]);
   if(!number) return console.error(`Number ${match[1]} is not a number`);
 
-  if(lastNumber && number !== (lastNumber+2)) return console.error(`Number ${number} is not the same as last number ${lastNumber + 2}`);
+  if(lastNumber && lastNumber != false && lastNumber != null && number !== (lastNumber+2)) return console.error(`Number ${number} is not the same as last number ${lastNumber + 2}`);
   await sendTypingIndicator();
-  await wait((WAIT_TIME || 5) * 1000);
+  await wait((WaitTime || 5) * 1000);
   
   const newNumber = number + 1;
   lastMessage = message;
   lastNumber = number;
   console.log(`${number} (${message.author.username}) => ${newNumber}`);
   var msgToSend = `${newNumber}`;
-  if(writeMessage) {
+  if(writeMessage && writeMessage != null) {
     msgToSend += ` ${writeMessage}`;
     console.log(`Writing message: ${writeMessage}`)
   }
