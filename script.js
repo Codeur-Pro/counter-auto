@@ -176,7 +176,7 @@ client.on("messageCreate", async (message) => {
   const number = parseInt(match[1]);
   if(!number) return console.error(`Number ${match[1]} is not a number`);
 
-  if(lastNumber && lastNumber != false && lastNumber != null && number !== (lastNumber+2)) return console.error(`Number ${number} is not the same as last number ${lastNumber + 2}`);
+  if(lastNumber && lastNumber != false && lastNumber != null && number !== (lastNumber+1)) return console.error(`Number ${number} is not the same as last number ${lastNumber + 1}`);
   await sendTypingIndicator();
   await wait((WaitTime || 5) * 1000);
   
