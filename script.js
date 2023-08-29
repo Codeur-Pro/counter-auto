@@ -3,9 +3,10 @@ const { Client } = require("discord.js");
 const readline = require("readline");
 
 const client = new Client({
-  intents: [IntentsBitField.Flags.GuildMessages, IntentsBitField.Flags.MessageContent, IntentsBitField.Flags.Guilds],
+  intents: [IntentsBitField.Flags.GuildMessages, IntentsBitField.Flags.MessageContent, IntentsBitField.Flags.Guilds ],
   partials: [
-    Partials.Message
+    Partials.Message,
+    Partials.Channel,
   ]
 })
 
@@ -96,8 +97,9 @@ async function amorce(){
   await sendMessage(msgToSend);
 }
 
-client.on("ready", () => {
+client.on("ready", async () => {
   console.log(`Connecté en tant que ${client.user.tag}, ${multipleAccounts && AUTHOR_2 && TOKEN_2 ? "avec 2 comptes utilisateurs" : "avec 1 compte utilisateur"}`);
+  console.log(`Salon: ${(await client.channels.cache.get(CHANNEL_ID)).name || CHANNEL_ID}`);
 });
 
 var rl = readline.createInterface({
