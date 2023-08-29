@@ -1,0 +1,6 @@
+node_modules
+counterScript/
+.vscode/
+ignore/
+config.js
+pnpm-lock.yaml
