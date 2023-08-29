@@ -176,7 +176,7 @@ client.on("messageCreate", async (message) => {
   const number = parseInt(match[1]);
   if(!number) return console.error(`Number ${match[1]} is not a number`);
 
-  if(lastNumber && lastNumber != false && lastNumber != null && number !== (lastNumber+2) && (Math.abs(number - lastNumber) < 4)) return console.error(`gap with Number ${number} - ${lastNumber} : ${number - lastNumber}`);
+  if(lastNumber && lastNumber != false && lastNumber != null && number !== (lastNumber+2) && (Math.abs(number - lastNumber) > 4)) return console.error(`gap with Number ${number} - ${lastNumber} : ${number - lastNumber}`);
   await sendTypingIndicator();
   await wait((WaitTime || 5) * 1000);
   
